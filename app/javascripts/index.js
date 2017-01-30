@@ -1,7 +1,5 @@
 // Preload all images
-// Take from an array
 
-import rand from './lib/rand';
 import shuffle from './lib/shuffle';
 
 const STATE = {};
@@ -18,7 +16,7 @@ const DOM = {
 
 const detect = el => fn =>
   el.addEventListener('scroll', () => {
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight) fn();
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - (el.clientHeight / 2)) fn();
   });
 
 const img = ({ id, klass, src }) => {
@@ -30,7 +28,7 @@ const img = ({ id, klass, src }) => {
 };
 
 const src = (question, n) =>
-  `img/${encodeURIComponent(question)}/${n}.jpeg`;
+  `img/${encodeURIComponent(question)}/${n}.png`;
 
 const times = amount => fn =>
   Array(amount).fill(undefined).map((_, i) => fn(i));
@@ -43,7 +41,7 @@ const fill = (el, question) => {
 };
 
 const gen = question =>
-  shuffle(times(50)(i =>
+  shuffle(times(500)(i =>
     img({ src: src(question, i + 1) })));
 
 const take = (question, amount) => {
@@ -62,6 +60,9 @@ export default () => {
 
     fill(el, question);
 
-    detect(el)(() => fill(el, question));
+    detect(el)(() => {
+      console.log(`Appending ${question}`)
+      fill(el, question);
+    });
   });
 };

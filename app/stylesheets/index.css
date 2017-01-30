@@ -31,7 +31,8 @@ img {
   top: 0;
   bottom: 0;
   width: 50%;
-  overflow-y: auto;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
   .set:first-child {
     left: 0;
