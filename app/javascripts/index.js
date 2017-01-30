@@ -1,6 +1,6 @@
-// Preload all images
-
+import imagesloaded from 'imagesloaded';
 import shuffle from './lib/shuffle';
+import animate from './lib/animate';
 
 const STATE = {};
 
@@ -13,11 +13,6 @@ const DOM = {
   app: document.getElementById('app'),
   sets: document.getElementsByClassName('set'),
 };
-
-const detect = el => fn =>
-  el.addEventListener('scroll', () => {
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight - (el.clientHeight / 2)) fn();
-  });
 
 const img = ({ id, klass, src }) => {
   const el = document.createElement('img');
@@ -33,16 +28,8 @@ const src = (question, n) =>
 const times = amount => fn =>
   Array(amount).fill(undefined).map((_, i) => fn(i));
 
-const fill = (el, question) => {
-
-
-  return take(question, 30)
-    .forEach(img => el.appendChild(img));
-};
-
-const gen = question =>
-  shuffle(times(500)(i =>
-    img({ src: src(question, i + 1) })));
+const gen = () =>
+  shuffle(times(500)(i => i + 1));
 
 const take = (question, amount) => {
   if (STATE[question].pool.length === 0) {
@@ -52,17 +39,30 @@ const take = (question, amount) => {
   return STATE[question].pool.splice(0, amount);
 };
 
+const next = question => {
+  const indexes = take(question, 1);
+
+  indexes.forEach(i => {
+    const el = img({ src: src(question, i) });
+
+    STATE[question].el.appendChild(el);
+
+    imagesloaded(STATE[question].el, () => {
+      animate({ el, speed: 1.5 })
+        .then(() => next(question));
+    });
+  });
+};
+
 export default () => {
   Array.prototype.map.call(DOM.sets, (el, i) => {
     const question = QUESTIONS[i];
 
-    STATE[question] = { pool: gen(question) };
+    STATE[question] = {
+      el,
+      pool: gen(question)
+    };
 
-    fill(el, question);
-
-    detect(el)(() => {
-      console.log(`Appending ${question}`)
-      fill(el, question);
-    });
+    next(question);
   });
 };

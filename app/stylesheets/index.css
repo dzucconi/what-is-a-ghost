@@ -18,12 +18,6 @@ body {
   background-color: white;
 }
 
-img {
-  display: block;
-  max-width: 100%;
-  margin: auto;
-}
-
 .app {}
 
 .set {
@@ -31,8 +25,7 @@ img {
   top: 0;
   bottom: 0;
   width: 50%;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
   .set:first-child {
     left: 0;
@@ -40,3 +33,11 @@ img {
   .set:last-child {
     right: 0;
   }
+
+img {
+  display: block;
+  max-width: 100%;
+  margin: auto;
+  position: absolute;
+  bottom: 100%;
+}
